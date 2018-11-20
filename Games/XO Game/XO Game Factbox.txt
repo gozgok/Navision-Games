@@ -1,0 +1,70 @@
+OBJECT Page 50001 XO Game Factbox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=31.10.18;
+    Time=10:31:52;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    SourceTable=Table50001;
+    PageType=CardPart;
+    OnAfterGetRecord=BEGIN
+                        FINDFIRST;
+                        PlayerWin := 0;
+                        ComputerWin := 0;
+                        TieNoWin := 0;
+                        REPEAT
+                         IF Player THEN BEGIN
+                           PlayerWin := PlayerWin + 1;
+                         END ELSE IF Computer THEN BEGIN
+                           ComputerWin := ComputerWin + 1;
+                         END ELSE IF Tie THEN BEGIN
+                           TieNoWin := TieNoWin + 1;
+                         END
+                        UNTIL NEXT = 0;
+                         TotalGame := PlayerWin + ComputerWin + TieNoWin;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                CaptionML=[ENU=Total Game;
+                           TRK=Toplam Oyun];
+                SourceExpr=TotalGame }
+
+    { 3   ;1   ;Field     ;
+                CaptionML=[ENU=Player Win;
+                           TRK=Oyuncu Kazandç];
+                SourceExpr=PlayerWin }
+
+    { 4   ;1   ;Field     ;
+                CaptionML=[ENU=Computer Win;
+                           TRK=Bilgisayar Kazandç];
+                SourceExpr=ComputerWin }
+
+    { 5   ;1   ;Field     ;
+                CaptionML=[ENU=Tie;
+                           TRK=Berabere];
+                SourceExpr=TieNoWin }
+
+  }
+  CODE
+  {
+    VAR
+      TotalGame@1000 : Integer;
+      PlayerWin@1001 : Integer;
+      ComputerWin@1002 : Integer;
+      TieNoWin@1003 : Integer;
+
+    BEGIN
+    END.
+  }
+}
+

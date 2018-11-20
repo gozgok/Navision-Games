@@ -1,0 +1,34 @@
+OBJECT Table 51001 Battleship Game Statistics
+{
+  OBJECT-PROPERTIES
+  {
+    Date=31.10.18;
+    Time=10:28:19;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    CaptionML=TRK=Oyun ˜statistikleri;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;DataClassification=ToBeClassified }
+    { 2   ;   ;Player              ;Boolean       ;DataClassification=ToBeClassified }
+    { 3   ;   ;Computer            ;Boolean       ;DataClassification=ToBeClassified }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

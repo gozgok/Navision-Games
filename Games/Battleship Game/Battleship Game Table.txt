@@ -1,0 +1,38 @@
+OBJECT Table 51000 Battleship Game Table
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16.10.18;
+    Time=09:28:52;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;BS                  ;Integer       ;DataClassification=ToBeClassified }
+    { 2   ;   ;A                   ;Text30        ;DataClassification=ToBeClassified }
+    { 3   ;   ;B                   ;Text30        ;DataClassification=ToBeClassified }
+    { 4   ;   ;C                   ;Text30        ;DataClassification=ToBeClassified }
+    { 5   ;   ;D                   ;Text30        ;DataClassification=ToBeClassified }
+    { 6   ;   ;E                   ;Text30        ;DataClassification=ToBeClassified }
+    { 7   ;   ;F                   ;Text30        ;DataClassification=ToBeClassified }
+    { 8   ;   ;G                   ;Text30        ;DataClassification=ToBeClassified }
+  }
+  KEYS
+  {
+    {    ;BS                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

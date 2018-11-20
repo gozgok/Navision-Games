@@ -1,0 +1,34 @@
+OBJECT Table 50000 XO Game Table
+{
+  OBJECT-PROPERTIES
+  {
+    Date=13.10.18;
+    Time=09:29:24;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;XO                  ;Code1         ;DataClassification=ToBeClassified }
+    { 2   ;   ;A                   ;Text1         ;DataClassification=ToBeClassified }
+    { 3   ;   ;B                   ;Text1         ;DataClassification=ToBeClassified }
+    { 4   ;   ;C                   ;Text1         ;DataClassification=ToBeClassified }
+  }
+  KEYS
+  {
+    {    ;XO                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

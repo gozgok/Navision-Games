@@ -1,0 +1,277 @@
+OBJECT Page 50000 XO Game Page
+{
+  OBJECT-PROPERTIES
+  {
+    Date=31.10.18;
+    Time=10:39:35;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table50000;
+    PageType=List;
+    ShowFilter=No;
+    OnInit=BEGIN
+              DELETEALL;
+              CLEAR(XOArray);
+              Style := 'StrongAccent';
+              XO := '1';
+              INSERT;
+              XO := '2';
+              INSERT;
+              XO := '3';
+              INSERT;
+           END;
+
+    ActionList=ACTIONS
+    {
+      { 9       ;    ;ActionContainer;
+                      Name=Game;
+                      CaptionML=ENU=Game;
+                      ActionContainerType=NewDocumentItems }
+      { 10      ;1   ;Action    ;
+                      Name=NewGameAction;
+                      CaptionML=ENU=New Game;
+                      PromotedIsBig=Yes;
+                      PromotedCategory=Category4;
+                      PromotedOnly=Yes;
+                      OnAction=BEGIN
+                                   PAGE.RUN(50000);
+                                   CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr=XO }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=A;
+                StyleExpr=Style;
+                OnValidate=VAR
+                             RowNumber@1000 : Integer;
+                             ColNumber@1001 : Integer;
+                             Done@1002 : Boolean;
+                           BEGIN
+                               BoolA := CharValidationAndColor(A);
+                               IF (BoolA) THEN BEGIN
+                                 EVALUATE(RowNumber,XO);
+                                 ColNumber := 1;
+                                 XOArray[RowNumber,ColNumber] := A;
+                                 Done := IsDone;
+                                 IF Done <> TRUE THEN
+                                   ComputerPlayer;
+                               END;
+                           END;
+                            }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=B;
+                StyleExpr=Style;
+                OnValidate=VAR
+                             RowNumber@1001 : Integer;
+                             ColNumber@1000 : Integer;
+                             Done@1002 : Boolean;
+                           BEGIN
+                               BoolB := CharValidationAndColor(B);
+                               IF (BoolB) THEN BEGIN
+                                 EVALUATE(RowNumber,XO);
+                                 ColNumber := 2;
+                                 XOArray[RowNumber,ColNumber] := B;
+                                 Done := IsDone;
+                                 IF Done <> TRUE THEN
+                                   ComputerPlayer;
+                               END;
+                           END;
+                            }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=C;
+                StyleExpr=Style;
+                OnValidate=VAR
+                             RowNumber@1001 : Integer;
+                             ColNumber@1000 : Integer;
+                             Done@1002 : Boolean;
+                           BEGIN
+                               BoolC := CharValidationAndColor(C);
+                               IF (BoolC) THEN BEGIN
+                                 EVALUATE(RowNumber,XO);
+                                 ColNumber := 3;
+                                 XOArray[RowNumber,ColNumber] := C;
+                                 Done := IsDone;
+                                 IF Done <> TRUE THEN
+                                   ComputerPlayer;
+                               END;
+
+                           END;
+                            }
+
+    { 7   ;0   ;Container ;
+                ContainerType=FactBoxArea }
+
+    { 8   ;1   ;Part      ;
+                CaptionML=[ENU=XO Game Statistics;
+                           TRK=Oyun òstatistikleri];
+                ApplicationArea=#Advanced;
+                PagePartID=Page50001;
+                PartType=Page;
+                UpdatePropagation=Both }
+
+  }
+  CODE
+  {
+    VAR
+      Style@1001 : Text;
+      BoolA@1000 : Boolean;
+      BoolB@1004 : Boolean;
+      BoolC@1005 : Boolean;
+      XOArray@1006 : ARRAY [3,3] OF Text;
+      XOGameStatistics@1002 : Record 50001;
+      TextPlayerWin@1003 : TextConst 'ENU=Player Win!;TRK=Oyuncu Kazandç!';
+      TextCompWin@1007 : TextConst 'ENU=Computer Win!;TRK=Bilgisayar Kazandç!';
+      TextTie@1008 : TextConst 'ENU=Tie!;TRK=Berabere!';
+
+    LOCAL PROCEDURE CharValidationAndColor@47(VAR Value@1000 : Text) : Boolean;
+    BEGIN
+        IF (Value = 'x') OR (Value = '') THEN BEGIN
+          EXIT(TRUE);
+        END
+        ELSE BEGIN
+          CLEAR(Value);
+          EXIT(FALSE);
+        END;
+
+    END;
+
+    LOCAL PROCEDURE ComputerPlayer@69();
+    VAR
+      RowNumber@1001 : Integer;
+      ColNumber@1000 : Integer;
+      RandChar@1004 : Integer;
+      StrRowNumber@1002 : Text;
+      Done@1003 : Boolean;
+    BEGIN
+        DELETEALL;
+        MakeMove;
+        FOR RowNumber := 1 TO 3 DO BEGIN
+          StrRowNumber := FORMAT(RowNumber);
+          XO := StrRowNumber;
+          A := XOArray[RowNumber,1];
+          B := XOArray[RowNumber,2];
+          C := XOArray[RowNumber,3];
+          INSERT;
+        END;
+         IsDone;
+    END;
+
+    LOCAL PROCEDURE PickRandom@72() : Integer;
+    VAR
+      RandNum@1000 : Integer;
+    BEGIN
+        RandNum := RANDOM(3);
+        EXIT(RandNum);
+    END;
+
+    LOCAL PROCEDURE MakeMove@73();
+    VAR
+      RandRow@1005 : Integer;
+      RandCol@1004 : Integer;
+      Found@1003 : Boolean;
+    BEGIN
+        Found := FALSE;
+        WHILE Found <> TRUE DO BEGIN
+          RandRow := PickRandom;
+          RandCol := PickRandom;
+          IF XOArray[RandRow,RandCol] = '' THEN BEGIN
+            XOArray[RandRow,RandCol] := 'o';
+            Found := TRUE;
+          END;
+        END;
+    END;
+
+    LOCAL PROCEDURE IsDone@5() : Boolean;
+    VAR
+      Row@1000 : Integer;
+      Col@1001 : Integer;
+      Line1@1008 : Text;
+      Line2@1007 : Text;
+      Line3@1002 : Text;
+      LeftCrossLine@1005 : Text;
+      RightCrossLine@1006 : Text;
+      VLine1@1010 : Text;
+      VLine2@1009 : Text;
+      VLine3@1004 : Text;
+      Done@1011 : Boolean;
+    BEGIN
+        Done := FALSE;
+        Line1 := XOArray[1,1] + XOArray[1,2] + XOArray[1,3];
+        Line2 := XOArray[2,1] + XOArray[2,2] + XOArray[2,3];
+        Line3 := XOArray[3,1] + XOArray[3,2] + XOArray[3,3];
+        VLine1 := XOArray[1,1] + XOArray[2,1] + XOArray[3,1];
+        VLine2 := XOArray[1,2] + XOArray[2,2] + XOArray[3,2];
+        VLine3 := XOArray[1,3] + XOArray[2,3] + XOArray[3,3];
+        LeftCrossLine := XOArray[1,1] + XOArray[2,2] + XOArray[3,3];
+        RightCrossLine := XOArray[1,3] + XOArray[2,2] + XOArray[3,1];
+        IF (Line1 = 'ooo') OR (Line2 = 'ooo') OR (Line3 = 'ooo') OR
+          (VLine1 = 'ooo') OR (VLine2 = 'ooo') OR (VLine3 = 'ooo')
+          OR (LeftCrossLine = 'ooo') OR (RightCrossLine = 'ooo') THEN BEGIN
+          DIALOG.MESSAGE(TextCompWin);
+          Done := TRUE;
+          WITH XOGameStatistics DO BEGIN
+            FINDLAST;
+            "No." := "No." + 1;
+            Computer := TRUE;
+            Player := FALSE;
+            Tie := FALSE;
+            INSERT;
+          END;
+          //CurrPage.UPDATE;
+          EXIT(Done);
+        END ELSE IF (Line1 = 'xxx') OR (Line2 = 'xxx') OR (Line3 = 'xxx') OR
+          (VLine1 = 'xxx') OR (VLine2 = 'xxx') OR (VLine3 = 'xxx')
+          OR (LeftCrossLine = 'xxx') OR (RightCrossLine = 'xxx') THEN BEGIN
+          DIALOG.MESSAGE(TextPlayerWin);
+          Done := TRUE;
+          WITH XOGameStatistics DO BEGIN
+            FINDLAST;
+            "No." := "No." + 1;
+            Player := TRUE;
+            Computer := FALSE;
+            Tie := FALSE;
+            INSERT;
+          END;
+          CurrPage.UPDATE;
+          EXIT(Done);
+        END ELSE IF (STRLEN(Line1) = 3) AND (STRLEN(Line2) = 3) AND (STRLEN(Line3) = 3) THEN BEGIN
+          DIALOG.MESSAGE(TextTie);
+          Done := TRUE;
+          WITH XOGameStatistics DO BEGIN
+            FINDLAST;
+            "No." := "No." + 1;
+            Tie := TRUE;
+            Player := FALSE;
+            Computer := FALSE;
+            INSERT;
+          END;
+          CurrPage.UPDATE;
+          EXIT(Done);
+        END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

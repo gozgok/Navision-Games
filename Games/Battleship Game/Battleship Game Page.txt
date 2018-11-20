@@ -1,0 +1,501 @@
+OBJECT Page 51000 Battleship Game Page
+{
+  OBJECT-PROPERTIES
+  {
+    Date=31.10.18;
+    Time=10:37:28;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table51000;
+    PageType=List;
+    ShowFilter=No;
+    OnInit=BEGIN
+               DELETEALL;
+               BS := 1;
+               D := '|';
+               INSERT;
+               BS := 2;
+               D := '|';
+               INSERT;
+               BS := 3;
+               D := '|';
+               INSERT;
+               BS := 4;
+               D := '|';
+               INSERT;
+               BS := 5;
+               D := '|';
+               INSERT;
+               BS := 6;
+               D := '|';
+               INSERT;
+               PlaceTheShip(3);
+               PlaceTheShip(2);
+               PlaceTheShip(2);
+               PlaceTheShip(1);
+               ShowList;
+           END;
+
+    ActionList=ACTIONS
+    {
+      { 11      ;    ;ActionContainer;
+                      Name=Game;
+                      ActionContainerType=ActionItems }
+      { 12      ;1   ;Action    ;
+                      Name=New Game;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      PromotedCategory=Category4;
+                      PromotedOnly=Yes;
+                      OnAction=BEGIN
+                                   PAGE.RUN(51000);
+                                   CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr=BS }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=A;
+                Style=StrongAccent;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(A);
+                               IF IsValid THEN BEGIN
+                                 BSArrayLive[BS,1] := 'x';
+                                 END;
+                           END;
+                            }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=B;
+                Style=StrongAccent;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(B);
+                               IF IsValid THEN BEGIN
+                                 BSArrayLive[BS,2] := 'x';
+                                 END;
+                           END;
+                            }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=C;
+                Style=StrongAccent;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(C);
+                               IF IsValid THEN BEGIN
+                                 BSArrayLive[BS,3] := 'x';
+                                 END;
+                           END;
+                            }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr=D;
+                Style=Strong;
+                StyleExpr=TRUE }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr=E;
+                Style=Unfavorable;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                             Done@1001 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(E);
+                               IF (IsValid) AND (BSArray[BS,5] = 'x') THEN BEGIN
+                                 BSArrayLive[BS,5] := '(x)';
+                                 ShowList;
+                                 Done := IsDone;
+                               END ELSE BEGIN
+                                 BSArrayLive[BS,5] := 'Õ';
+                                 ShowList;
+                               END;
+                               IF NOT Done THEN BEGIN
+                                 MakeMove;
+                                 ShowList;
+                                 END;
+                           END;
+                            }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr=F;
+                Style=Unfavorable;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                             Done@1001 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(F);
+                               IF (IsValid) AND (BSArray[BS,6] = 'x') THEN BEGIN
+                                 BSArrayLive[BS,6] := '(x)';
+                                 ShowList;
+                                 Done := IsDone;
+                               END ELSE BEGIN
+                                 BSArrayLive[BS,6] := 'Õ';
+                                 ShowList;
+                               END;
+                               IF NOT Done THEN BEGIN
+                                 MakeMove;
+                                 ShowList;
+                                 END;
+                           END;
+                            }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=G;
+                Style=Unfavorable;
+                StyleExpr=TRUE;
+                OnValidate=VAR
+                             IsValid@1000 : Boolean;
+                             Done@1001 : Boolean;
+                           BEGIN
+                               IsValid := ValidateChar(G);
+                               IF (IsValid) AND (BSArray[BS,7] = 'x') THEN BEGIN
+                                 BSArrayLive[BS,7] := '(x)';
+                                 ShowList;
+                                 Done := IsDone;
+                               END ELSE BEGIN
+                                 BSArrayLive[BS,7] := 'Õ';
+                                 ShowList;
+                               END;
+                               IF NOT Done THEN BEGIN
+                                 MakeMove;
+                                 ShowList;
+                                 END;
+                           END;
+                            }
+
+    { 14  ;0   ;Container ;
+                ContainerType=FactBoxArea }
+
+    { 13  ;1   ;Part      ;
+                CaptionML=[ENU=Battleship Game Stat.;
+                           TRK=Oyun òstatistikleri];
+                ApplicationArea=#Advanced;
+                PagePartID=Page51001;
+                PartType=Page;
+                UpdatePropagation=Both }
+
+  }
+  CODE
+  {
+    VAR
+      BSArray@1000 : ARRAY [6,7] OF Text;
+      BSArrayLive@1001 : ARRAY [6,7] OF Text;
+      BattleshipGameStatistics@1002 : Record 51001;
+      TextCompWin@1003 : TextConst 'ENU=Computer Win!\ \_*_RESULTS_*_\Computer:%2 Hit! \Player:%1 Hit!;TRK=Bilgisayar Kazandç!\ \_*_SONUÄLAR_*_\Bilgisayar:%2 Vurdu! \Oyuncu:%1 Vurdu!';
+      TextPlayerWin@1004 : TextConst 'ENU=Player Win!\ \_*_RESULTS_*_\Player:%1 Hit! \Computer:%2 Hit!;TRK=Oyuncu Kazandç!\ \_*_SONUÄLAR_*_\Oyuncu:%1 Vurdu! \Bilgisayar:%2 Vurdu!';
+
+    LOCAL PROCEDURE ValidateChar@4(VAR Value@1000 : Text) : Boolean;
+    BEGIN
+        IF (Value = 'x') THEN BEGIN
+          EXIT(TRUE);
+        END
+        ELSE BEGIN
+          CLEAR(Value);
+          EXIT(FALSE);
+        END;
+    END;
+
+    LOCAL PROCEDURE ShowList@3();
+    VAR
+      RowNumber@1000 : Integer;
+    BEGIN
+        DELETEALL;
+        FOR RowNumber := 1 TO 6 DO BEGIN
+          BS := RowNumber;
+          A := BSArrayLive[RowNumber,1];
+          B := BSArrayLive[RowNumber,2];
+          C := BSArrayLive[RowNumber,3];
+          BSArrayLive[RowNumber,4] := '|';
+          D := BSArrayLive[RowNumber,4];
+          E := BSArrayLive[RowNumber,5];
+          F := BSArrayLive[RowNumber,6];
+          G := BSArrayLive[RowNumber,7];
+          INSERT;
+        END;
+    END;
+
+    LOCAL PROCEDURE PickRandNum@37(MaxValue@1001 : Integer) : Integer;
+    VAR
+      RandNum@1000 : Integer;
+    BEGIN
+        RandNum := RANDOM(MaxValue);
+        EXIT(RandNum);
+    END;
+
+    LOCAL PROCEDURE PlaceTheShip@40(ShipSize@1000 : Integer);
+    VAR
+      Found@1001 : Boolean;
+      RowNum@1002 : Integer;
+      ColNum@1003 : Integer;
+    BEGIN
+        Found := FALSE;
+        WHILE NOT Found DO BEGIN
+          RowNum := PickRandNum(6);
+          ColNum := PickRandNum(3) + 4;
+          IF (ColNum = 5) THEN BEGIN
+            IF ((RowNum + (ShipSize - 1)) <= 6 ) AND ((RowNum + (ShipSize - 1)) > 0) THEN BEGIN
+              IF ShipSize = 3 THEN BEGIN
+                IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum)
+                   AND CheckEmptyness(RowNum+2,ColNum) THEN BEGIN
+                      BSArray[RowNum,ColNum] := 'x';
+                      BSArray[RowNum+1,ColNum] := 'x';
+                      BSArray[RowNum+2,ColNum] := 'x';
+                      Found := TRUE;
+                      EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum+1)
+                   AND CheckEmptyness(RowNum,ColNum+2) THEN BEGIN
+                      BSArray[RowNum,ColNum] := 'x';
+                      BSArray[RowNum,ColNum+1] := 'x';
+                      BSArray[RowNum,ColNum+2] := 'x';
+                      Found := TRUE;
+                      EXIT;
+                END;
+              END;
+              IF ShipSize = 2 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum+1,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum+1) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum,ColNum+1] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END;
+              END;
+              IF ShipSize = 1 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                  END;
+              END;
+            END;
+          END;
+          IF (ColNum = 6) THEN BEGIN
+            IF ((RowNum + (ShipSize - 1)) <= 6 ) AND ((RowNum + (ShipSize - 1)) > 0) OR
+              (((ColNum + 1) <= 7 ) AND ((ColNum - 1) >= 5)) THEN BEGIN
+              IF ShipSize = 3 THEN BEGIN
+                IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum)
+                   AND CheckEmptyness(RowNum+2,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum+1,ColNum] := 'x';
+                    BSArray[RowNum+2,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum-1)
+                   AND CheckEmptyness(RowNum,ColNum+1) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum,ColNum-1] := 'x';
+                    BSArray[RowNum,ColNum+1] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum-1,ColNum)
+                   AND CheckEmptyness(RowNum-2,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum-1,ColNum] := 'x';
+                    BSArray[RowNum-2,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END;
+              END;
+              IF ShipSize = 2 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum+1,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum+1) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum,ColNum+1] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum-1,ColNum)THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum-1,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                  END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum-1)THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum,ColNum-1] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                  END;
+              END;
+              IF ShipSize = 1 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    Found := TRUE;
+                  EXIT;
+                END;
+              END;
+            END;
+          END;
+          IF (ColNum = 7) THEN BEGIN
+            IF ((RowNum + (ShipSize - 1)) <= 6 ) AND ((RowNum + (ShipSize - 1)) > 0) THEN BEGIN
+              IF ShipSize = 3 THEN BEGIN
+                IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum)
+                   AND CheckEmptyness(RowNum+2,ColNum) THEN BEGIN
+                      BSArray[RowNum,ColNum] := 'x';
+                      BSArray[RowNum+1,ColNum] := 'x';
+                      BSArray[RowNum+2,ColNum] := 'x';
+                      Found := TRUE;
+                      EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum-1)
+                   AND CheckEmptyness(RowNum,ColNum-2) THEN BEGIN
+                      BSArray[RowNum,ColNum] := 'x';
+                      BSArray[RowNum,ColNum-1] := 'x';
+                      BSArray[RowNum,ColNum-2] := 'x';
+                      Found := TRUE;
+                      EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum-1,ColNum)
+                   AND CheckEmptyness(RowNum-2,ColNum) THEN BEGIN
+                      BSArray[RowNum,ColNum] := 'x';
+                      BSArray[RowNum-1,ColNum] := 'x';
+                      BSArray[RowNum-2,ColNum] := 'x';
+                      Found := TRUE;
+                      EXIT;
+                END;
+              END;
+              IF ShipSize = 2 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum+1,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum+1,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum,ColNum-1) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum,ColNum-1] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END ELSE IF CheckEmptyness(RowNum,ColNum) AND CheckEmptyness(RowNum-1,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    BSArray[RowNum-1,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                END;
+              END;
+              IF ShipSize = 1 THEN BEGIN
+                  IF CheckEmptyness(RowNum,ColNum) THEN BEGIN
+                    BSArray[RowNum,ColNum] := 'x';
+                    Found := TRUE;
+                    EXIT;
+                  END;
+              END;
+            END;
+          END;
+        END;
+    END;
+
+    LOCAL PROCEDURE CheckEmptyness@43(Row@1000 : Integer;Col@1001 : Integer) : Boolean;
+    BEGIN
+        IF ((Row > 0) AND (Row <= 6)) AND ((Col >= 5) AND (Col <= 7)) THEN BEGIN
+          IF BSArray[Row,Col] = 'x' THEN BEGIN
+            EXIT(FALSE);
+          END ELSE
+            EXIT(TRUE);
+        END;
+        EXIT(FALSE);
+    END;
+
+    LOCAL PROCEDURE MakeMove@50();
+    VAR
+      RowNumber@1005 : Integer;
+      ColNumber@1004 : Integer;
+      Found@1003 : Boolean;
+    BEGIN
+        Found := FALSE;
+        WHILE NOT Found DO BEGIN
+        RowNumber := PickRandNum(6);
+        ColNumber := PickRandNum(3);
+          IF (BSArrayLive[RowNumber,ColNumber] <> '') AND (BSArrayLive[RowNumber,ColNumber] <> '(x)')
+            AND (BSArrayLive[RowNumber,ColNumber] <> 'Õ') THEN BEGIN
+              BSArrayLive[RowNumber,ColNumber] := '(x)';
+              Found := TRUE;
+          END ELSE IF BSArrayLive[RowNumber,ColNumber] = '' THEN BEGIN
+              BSArrayLive[RowNumber,ColNumber] := 'Õ';
+              Found := TRUE;
+          END ELSE BEGIN
+              Found := FALSE;
+          END;
+        END;
+        IsDone;
+    END;
+
+    LOCAL PROCEDURE IsDone@14() : Boolean;
+    VAR
+      PlayerCounter@1000 : Integer;
+      ComputerCounter@1001 : Integer;
+      i@1002 : Integer;
+      j@1003 : Integer;
+    BEGIN
+      PlayerCounter := 0;
+      ComputerCounter := 0;
+
+      FOR i:=1 TO 6 DO BEGIN
+        FOR j:=1 TO 7 DO BEGIN
+          IF (BSArrayLive[i,j] = '(x)') AND (j < 4) THEN BEGIN
+            ComputerCounter := ComputerCounter + 1;
+          END
+          ELSE IF (BSArrayLive[i,j] = '(x)') AND (j > 4) THEN BEGIN
+            PlayerCounter := PlayerCounter + 1;
+          END;
+        END;
+      END;
+      IF PlayerCounter = 8 THEN BEGIN
+          WITH BattleshipGameStatistics DO BEGIN
+            FINDLAST;
+            "No." := "No." + 1;
+            Computer := FALSE;
+            Player := TRUE;
+            INSERT;
+          END;
+          DIALOG.MESSAGE(TextPlayerWin,PlayerCounter,ComputerCounter);
+          EXIT(TRUE);
+        END
+        ELSE IF ComputerCounter = 8 THEN BEGIN
+          WITH BattleshipGameStatistics DO BEGIN
+            FINDLAST;
+            "No." := "No." + 1;
+            Computer := TRUE;
+            Player := FALSE;
+            INSERT;
+          END;
+          DIALOG.MESSAGE(TextCompWin,PlayerCounter,ComputerCounter);
+          EXIT(TRUE);
+        END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
